@@ -3,6 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TraceInterceptor } from './interceptors/trace.interceptor';
+import { UserModule } from './modules/user/user.module';
+import { User } from './modules/user/entities/user.entity';
 
 @Module({
   imports: [
@@ -16,9 +18,10 @@ import { TraceInterceptor } from './interceptors/trace.interceptor';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [],
+      entities: [User],
       synchronize: true,
     }),
+    UserModule,
   ],
   controllers: [],
   providers: [
