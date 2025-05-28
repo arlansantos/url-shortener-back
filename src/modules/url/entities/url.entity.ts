@@ -1,32 +1,38 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Url } from 'src/modules/url/entities/url.entity';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { User } from 'src/modules/user/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  OneToMany,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('users')
-export class User {
+@Entity('urls')
+export class Url {
   @ApiProperty()
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @ApiProperty()
   @Column()
-  name: string;
+  originalUrl: string;
 
   @ApiProperty()
-  @Column({ unique: true })
-  email: string;
+  @Column({ length: 6, unique: true })
+  shortUrl: string;
 
   @ApiProperty()
-  @Column()
-  password: string;
+  @Column({ type: 'int', default: 0 })
+  clickCount: number;
+
+  @ApiPropertyOptional({ type: () => User })
+  @ManyToOne(() => User, (user) => user.urls, { nullable: true })
+  @JoinColumn({ name: 'user_id' })
+  user?: User;
 
   @ApiProperty()
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
@@ -39,7 +45,4 @@ export class User {
   @ApiProperty()
   @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true })
   deletedAt: Date | null;
-
-  @OneToMany(() => Url, (url) => url.user)
-  urls: Url[];
 }
