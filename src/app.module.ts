@@ -7,6 +7,7 @@ import { UserModule } from './modules/user/user.module';
 import { User } from './modules/user/entities/user.entity';
 import { UrlModule } from './modules/url/url.module';
 import { Url } from './modules/url/entities/url.entity';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { Url } from './modules/url/entities/url.entity';
     }),
     UserModule,
     UrlModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [
