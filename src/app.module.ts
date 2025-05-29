@@ -23,6 +23,7 @@ import { AuthModule } from './modules/auth/auth.module';
       database: process.env.DB_NAME,
       entities: [User, Url],
       synchronize: true,
+      ssl: true,
     }),
     UserModule,
     UrlModule,
