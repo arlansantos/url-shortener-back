@@ -12,7 +12,12 @@ import {
   Request,
 } from '@nestjs/common';
 import { UrlService } from './url.service';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { IPaginateResult } from 'src/common/interfaces/paginate-result.interface';
 import { Url } from './entities/url.entity';
 import { PageDto } from 'src/utils/dto/page.dto';
@@ -22,6 +27,7 @@ import { UpdateUrlDto } from './dto/update-url.dto';
 import { ShortenUrlDto } from './dto/shorten-url.dto';
 import { RemoveUrlDto } from './dto/remove-url.dto';
 
+@ApiBearerAuth()
 @ApiTags('Url')
 @Controller('url')
 export class UrlController {

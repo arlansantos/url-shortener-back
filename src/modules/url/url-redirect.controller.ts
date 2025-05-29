@@ -3,12 +3,14 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IRequestWithTrace } from 'src/common/interfaces/request-with-trace.interface';
 import { UrlService } from './url.service';
 import { Response } from 'express';
+import { Public } from 'src/common/decorators/public.decorator';
 
 @ApiTags('Redirect')
 @Controller()
 export class UrlRedirectController {
   constructor(private readonly urlService: UrlService) {}
 
+  @Public()
   @Get(':shortUrl')
   @HttpCode(302)
   @ApiOperation({

@@ -12,6 +12,7 @@ async function bootstrap() {
     .setTitle('Url Shortener Backend API')
     .setDescription('The API for the Url Shortener Backend')
     .setVersion('1.0')
+    .addTag('Auth')
     .addTag('Redirect')
     .addTag('Url')
     .addTag('User')

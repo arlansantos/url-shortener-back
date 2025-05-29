@@ -8,7 +8,7 @@ import { User } from './modules/user/entities/user.entity';
 import { UrlModule } from './modules/url/url.module';
 import { Url } from './modules/url/entities/url.entity';
 import { AuthModule } from './modules/auth/auth.module';
-
+import { AuthGuard } from './modules/auth/guard/auth.guard';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -34,6 +34,10 @@ import { AuthModule } from './modules/auth/auth.module';
     {
       provide: APP_INTERCEPTOR,
       useClass: TraceInterceptor,
+    },
+    {
+      provide: 'APP_GUARD',
+      useClass: AuthGuard,
     },
   ],
 })

@@ -14,18 +14,26 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { User } from './entities/user.entity';
 import { IPaginateResult } from 'src/common/interfaces/paginate-result.interface';
 import { PageDto } from 'src/utils/dto/page.dto';
 import { FindAllUserResponseDto } from './dto/find-all-user-response.dto';
 import { IRequestWithTrace } from 'src/common/interfaces/request-with-trace.interface';
+import { Public } from 'src/common/decorators/public.decorator';
 
+@ApiBearerAuth()
 @ApiTags('User')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Public()
   @Post()
   @ApiOperation({
     summary: 'Criar um novo usuário',
