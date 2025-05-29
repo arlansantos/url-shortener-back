@@ -29,6 +29,7 @@ export class UrlService {
   async shortenUrl(
     shortenUrlDto: ShortenUrlDto,
     traceId: string,
+    userId: string | null = null,
   ): Promise<string> {
     this.logger.log(
       `[${traceId}] Encurtando a url: ${shortenUrlDto.originalUrl}`,
@@ -42,11 +43,11 @@ export class UrlService {
 
     let user = new User();
 
-    if (shortenUrlDto.userId) {
+    if (userId) {
       this.logger.log(
-        `[${traceId}] Associando a URL encurtada ao usuário: ${shortenUrlDto.userId}`,
+        `[${traceId}] Associando a URL encurtada ao usuário: ${userId}`,
       );
-      user = await this.userService.findOne(shortenUrlDto.userId, traceId);
+      user = await this.userService.findOne(userId, traceId);
     }
 
     const url = this.urlRepository.create({
@@ -83,7 +84,7 @@ export class UrlService {
     this.logger.log(
       `[${traceId}] Buscando todos os urls do usuário: ${userId}`,
     );
-    console.log(userId);
+
     const query = this.urlRepository
       .createQueryBuilder('url')
       .leftJoin('url.user', 'user')

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsUrl, IsUUID } from 'class-validator';
+import { IsUrl } from 'class-validator';
 
 export class ShortenUrlDto {
   @ApiProperty({
@@ -8,8 +8,4 @@ export class ShortenUrlDto {
   })
   @IsUrl()
   originalUrl: string;
-
-  @ApiProperty()
-  @IsUUID()
-  userId?: string;
 }

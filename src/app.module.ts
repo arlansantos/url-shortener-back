@@ -23,7 +23,7 @@ import { AuthGuard } from './modules/auth/guard/auth.guard';
       database: process.env.DB_NAME,
       entities: [User, Url],
       synchronize: true,
-      ssl: true,
+      ssl: Boolean(process.env.DB_SSL) || false,
     }),
     UserModule,
     UrlModule,

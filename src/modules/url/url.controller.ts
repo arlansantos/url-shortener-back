@@ -26,6 +26,7 @@ import { FindAllUrlResponseDto } from './dto/find-all-url-response.dto';
 import { UpdateUrlDto } from './dto/update-url.dto';
 import { ShortenUrlDto } from './dto/shorten-url.dto';
 import { RemoveUrlDto } from './dto/remove-url.dto';
+import { Optional } from 'src/common/decorators/optional.decorator';
 
 @ApiBearerAuth()
 @ApiTags('Url')
@@ -33,6 +34,7 @@ import { RemoveUrlDto } from './dto/remove-url.dto';
 export class UrlController {
   constructor(private readonly urlService: UrlService) {}
 
+  @Optional()
   @Post('shorten')
   @HttpCode(201)
   @ApiOperation({
@@ -52,7 +54,8 @@ export class UrlController {
     @Request() req: IRequestWithTrace,
   ): Promise<string> {
     const traceId = req.traceId;
-    return await this.urlService.shortenUrl(shortenUrlDto, traceId);
+    const userId = req.user?.sub || null;
+    return await this.urlService.shortenUrl(shortenUrlDto, traceId, userId);
   }
 
   @Get('all/:userId')

@@ -8,6 +8,7 @@ import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from 'src/common/decorators/public.decorator';
 import { AuthService } from '../auth.service';
+import { IS_OPTIONAL_KEY } from 'src/common/decorators/optional.decorator';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -26,6 +27,20 @@ export class AuthGuard implements CanActivate {
 
     const request: Request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
+
+    const isOptional = this.reflector.getAllAndOverride<boolean>(
+      IS_OPTIONAL_KEY,
+      [context.getHandler(), context.getClass()],
+    );
+
+    if (isOptional) {
+      if (token) {
+        const payload = await this.authService.verifyToken(token);
+        request['user'] = payload;
+      }
+
+      return true;
+    }
 
     if (!token) {
       throw new UnauthorizedException('Credencias Inválidas');
