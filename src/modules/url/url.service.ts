@@ -13,7 +13,6 @@ import { paginate } from 'src/utils/helpers/paginate';
 import { UpdateUrlDto } from './dto/update-url.dto';
 import { generateShortCode } from 'src/utils/helpers/generate-short-code';
 import { ShortenUrlDto } from './dto/shorten-url.dto';
-import { RemoveUrlDto } from './dto/remove-url.dto';
 import { UserService } from '../user/user.service';
 import { User } from '../user/entities/user.entity';
 
@@ -77,10 +76,15 @@ export class UrlService {
   }
 
   async findAllByUserId(
-    userId: string,
+    userId: string | null,
     pageDto: PageDto,
     traceId: string,
   ): Promise<IPaginateResult<Url>> {
+    if (!userId) {
+      this.logger.warn(`[${traceId}] Nenhum usuário fornecido`);
+      throw new UnauthorizedException(`Nenhum usuário fornecido`);
+    }
+
     this.logger.log(
       `[${traceId}] Buscando todos os urls do usuário: ${userId}`,
     );
@@ -130,11 +134,21 @@ export class UrlService {
   async update(
     id: string,
     updateUrlDto: UpdateUrlDto,
+    userId: string | null,
     traceId: string,
   ): Promise<void> {
+    if (!userId) {
+      this.logger.warn(
+        `[${traceId}] Nenhum usuário fornecido para atualização`,
+      );
+      throw new UnauthorizedException(
+        `Nenhum usuário fornecido para atualização`,
+      );
+    }
+
     const url = await this.findOne(id, traceId);
 
-    if (!(updateUrlDto.userId === url.user?.id)) {
+    if (!(userId === url.user?.id)) {
       this.logger.warn(
         `[${traceId}] Usuário não autorizado a atualizar esta URL`,
       );
@@ -152,12 +166,17 @@ export class UrlService {
 
   async remove(
     id: string,
-    removeUrlDto: RemoveUrlDto,
+    userId: string | null,
     traceId: string,
   ): Promise<void> {
+    if (!userId) {
+      this.logger.warn(`[${traceId}] Nenhum usuário fornecido para remoção`);
+      throw new UnauthorizedException(`Nenhum usuário fornecido para remoção`);
+    }
+
     const url = await this.findOne(id, traceId);
 
-    if (!(removeUrlDto.userId === url.user?.id)) {
+    if (!(userId === url.user?.id)) {
       this.logger.warn(
         `[${traceId}] Usuário não autorizado a deletar esta URL`,
       );

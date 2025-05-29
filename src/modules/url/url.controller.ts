@@ -25,7 +25,6 @@ import { IRequestWithTrace } from 'src/common/interfaces/request-with-trace.inte
 import { FindAllUrlResponseDto } from './dto/find-all-url-response.dto';
 import { UpdateUrlDto } from './dto/update-url.dto';
 import { ShortenUrlDto } from './dto/shorten-url.dto';
-import { RemoveUrlDto } from './dto/remove-url.dto';
 import { Optional } from 'src/common/decorators/optional.decorator';
 
 @ApiBearerAuth()
@@ -58,7 +57,7 @@ export class UrlController {
     return await this.urlService.shortenUrl(shortenUrlDto, traceId, userId);
   }
 
-  @Get('all/:userId')
+  @Get()
   @ApiOperation({
     summary: 'Listar todas as urls',
   })
@@ -68,11 +67,11 @@ export class UrlController {
     type: [FindAllUrlResponseDto],
   })
   async findAll(
-    @Param('userId', ParseUUIDPipe) userId: string,
     @Query() pageDto: PageDto,
     @Request() req: IRequestWithTrace,
   ): Promise<IPaginateResult<Url>> {
     const traceId = req.traceId;
+    const userId = req.user?.sub || null;
     return await this.urlService.findAllByUserId(userId, pageDto, traceId);
   }
 
@@ -93,12 +92,12 @@ export class UrlController {
     description: 'ID inválido (não é um UUID)',
   })
   @Get(':id')
-  findOne(
+  async findOne(
     @Param('id', ParseUUIDPipe) id: string,
     @Request() req: IRequestWithTrace,
   ): Promise<Url> {
     const traceId = req.traceId;
-    return this.urlService.findOne(id, traceId);
+    return await this.urlService.findOne(id, traceId);
   }
 
   @Patch(':id')
@@ -114,13 +113,14 @@ export class UrlController {
     status: 400,
     description: 'Parâmetros inválidos',
   })
-  update(
+  async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUrlDto: UpdateUrlDto,
     @Request() req: IRequestWithTrace,
   ): Promise<void> {
     const traceId = req.traceId;
-    return this.urlService.update(id, updateUrlDto, traceId);
+    const userId = req.user?.sub || null;
+    return await this.urlService.update(id, updateUrlDto, userId, traceId);
   }
 
   @Delete(':id')
@@ -140,12 +140,12 @@ export class UrlController {
     status: 400,
     description: 'ID inválido (não é um UUID)',
   })
-  remove(
+  async remove(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() removeDto: RemoveUrlDto,
     @Request() req: IRequestWithTrace,
   ): Promise<void> {
     const traceId = req.traceId;
-    return this.urlService.remove(id, removeDto, traceId);
+    const userId = req.user?.sub || null;
+    return await this.urlService.remove(id, userId, traceId);
   }
 }
