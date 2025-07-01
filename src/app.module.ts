@@ -9,6 +9,8 @@ import { UrlModule } from './modules/url/url.module';
 import { Url } from './modules/url/entities/url.entity';
 import { AuthModule } from './modules/auth/auth.module';
 import { AuthGuard } from './modules/auth/guard/auth.guard';
+import * as fs from 'fs';
+import * as path from 'path';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -22,8 +24,14 @@ import { AuthGuard } from './modules/auth/guard/auth.guard';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       entities: [User, Url],
-      synchronize: true,
-      ssl: Boolean(process.env.DB_SSL) || false,
+      synchronize: false,
+      ssl: {
+        ca: fs
+          .readFileSync(
+            path.join(__dirname, '..', 'certs', 'ca-certificate.crt'),
+          )
+          .toString(),
+      },
     }),
     UserModule,
     UrlModule,
